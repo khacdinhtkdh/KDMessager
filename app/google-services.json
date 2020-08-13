@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "265027390150",
+    "firebase_url": "https://kd-messager.firebaseio.com",
+    "project_id": "kd-messager",
+    "storage_bucket": "kd-messager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265027390150:android:56faa2c0287c3e1aa2a5c7",
+        "android_client_info": {
+          "package_name": "com.example.kdmessager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265027390150-hptlfdu5h6j4me27s57qbve03r064h96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZk9dw2Uy3BH3vOderk1lwduHXFhVkowE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265027390150-hptlfdu5h6j4me27s57qbve03r064h96.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
