@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_search.*
  */
 class SearchFragment : Fragment() {
     private var userAdapter: UserAdapter? = null
-    private var mUser: List<Users>? = null
+    private lateinit var mUser: ArrayList<Users>
     private var recyclerView: RecyclerView? = null
     private var searchEditText: EditText? = null
 
@@ -68,16 +68,16 @@ class SearchFragment : Fragment() {
         val refUsers = FirebaseDatabase.getInstance().reference.child("Users")
         refUsers.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
-                (mUser as ArrayList<Users>).clear()
+                mUser.clear()
                 if (searchEditText!!.text.toString() == "") {
                     for (snapshot in p0.children) {
                         val user = snapshot.getValue(Users::class.java)
                         if (user!!.uid != firebaseUserId) {
-                            (mUser as ArrayList<Users>).add(user)
+                            mUser.add(user)
                         }
                     }
                     if (context != null) {
-                        userAdapter = UserAdapter(context!!, mUser!!, false)
+                        userAdapter = UserAdapter(context!!, mUser, false)
                         recyclerView!!.adapter = userAdapter
                     }
                 }
@@ -98,15 +98,15 @@ class SearchFragment : Fragment() {
 
         queryUser.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
-                (mUser as ArrayList<Users>).clear()
+                mUser.clear()
                 for (snapshot in p0.children) {
                     val user = snapshot.getValue(Users::class.java)
                     if (user!!.uid != firebaseUserId) {
-                        (mUser as ArrayList<Users>).add(user)
+                        mUser.add(user)
                     }
                 }
                 if (context != null) {
-                    userAdapter = UserAdapter(context!!, mUser!!, false)
+                    userAdapter = UserAdapter(context!!, mUser, false)
                     recyclerView!!.adapter = userAdapter
                 }
             }

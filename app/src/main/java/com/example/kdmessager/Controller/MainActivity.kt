@@ -15,6 +15,7 @@ import com.example.kdmessager.Fragments.SearchFragment
 import com.example.kdmessager.Fragments.SettingsFragment
 import com.example.kdmessager.ModelClasses.Users
 import com.example.kdmessager.R
+import com.example.kdmessager.Ultilities.USERS
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         firebaseUser = FirebaseAuth.getInstance().currentUser
         refUser = FirebaseDatabase.getInstance().reference
-            .child("Users").child(firebaseUser!!.uid)
+            .child(USERS).child(firebaseUser!!.uid)
 
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_main)

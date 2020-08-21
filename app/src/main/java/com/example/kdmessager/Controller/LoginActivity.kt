@@ -24,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbar_login)
-        supportActionBar!!.title = "login"
+        supportActionBar!!.title = "Login"
 
         mAuth = FirebaseAuth.getInstance()
 
