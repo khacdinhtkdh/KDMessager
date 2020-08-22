@@ -1,8 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="295dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="9dp"
+>
     <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/msg_item_profile"
             android:layout_width="40dp"
-            android:layout_height="40dp"/>
+            android:layout_height="40dp"
+            android:src="@drawable/profile"
+    />
+
+    <TextView
+            android:id="@+id/msg_item_show_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="show message"
+            android:textSize="18sp"
+            android:layout_toRightOf="@+id/msg_item_profile"
+            android:layout_marginLeft="6dp"
+            android:padding="8dp"
+            android:background="@drawable/background_left"/>
+
+    <ImageView
+            android:id="@+id/msg_item_left_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginLeft="6dp"
+            android:layout_toRightOf="@+id/msg_item_profile"
+            android:visibility="gone"/>
+    <TextView
+            android:id="@+id/msg_item_seen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sent"
+            android:visibility="gone"
+            android:layout_below="@+id/msg_item_show_message"/>
 </RelativeLayout>

@@ -1,3 +1,5 @@
 package com.example.kdmessager.ModelClasses
 
-class ChatList constructor(val id: String)
+class ChatList (val id: String) {
+    constructor() : this ("")
+}

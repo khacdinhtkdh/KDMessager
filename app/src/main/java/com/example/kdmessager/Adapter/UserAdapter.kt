@@ -29,7 +29,6 @@ class UserAdapter(private val context: Context, private val mUser: ArrayList<Use
 
         fun bindUser(user: Users) {
             userNameTxt?.text = user.username
-            Log.d("KDSHIN", user.username)
             Picasso.get().load(user.profile).placeholder(R.drawable.profile).into(profileImage)
         }
 

@@ -40,12 +40,12 @@
             android:layout_height="match_parent"
             android:id="@+id/msg_list"
             android:layout_below="@+id/appbar"
-            android:layout_above="@+id/msg_relative"
-            android:background="#fff"/>
+            android:layout_above="@+id/msg_relative"/>
     <RelativeLayout
             android:id="@+id/msg_relative"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#fff"
             android:padding="6dp"
             android:layout_alignParentBottom="true">
         <ImageView
@@ -58,6 +58,7 @@
                 android:id="@+id/msg_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="Message:"
                 android:background="@android:color/transparent"
                 android:layout_toRightOf="@+id/msg_attachFile"
                 android:layout_toLeftOf="@+id/msg_send"

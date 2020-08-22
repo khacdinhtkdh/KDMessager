@@ -13,8 +13,10 @@ import androidx.viewpager.widget.ViewPager
 import com.example.kdmessager.Fragments.ChatsFragment
 import com.example.kdmessager.Fragments.SearchFragment
 import com.example.kdmessager.Fragments.SettingsFragment
+import com.example.kdmessager.ModelClasses.Chat
 import com.example.kdmessager.ModelClasses.Users
 import com.example.kdmessager.R
+import com.example.kdmessager.Ultilities.CHATS
 import com.example.kdmessager.Ultilities.USERS
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -45,15 +47,39 @@ class MainActivity : AppCompatActivity() {
 
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
-        val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
-        viewPagerAdapter.addFragment(ChatsFragment(), "Chats")
-        viewPagerAdapter.addFragment(SearchFragment(), "Search")
-        viewPagerAdapter.addFragment(SettingsFragment(), "Settings")
 
-        viewPager.adapter = viewPagerAdapter
-        tabLayout.setupWithViewPager(viewPager)
+        // display unread message //
+        val refUnread = FirebaseDatabase.getInstance().reference.child(CHATS)
+        refUnread.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("Not yet implemented")
+            }
 
-        //display user///
+            override fun onDataChange(p0: DataSnapshot) {
+                var countUnread = 0
+
+                for (snapshot in p0.children) {
+                    val chat = snapshot.getValue(Chat::class.java)!!
+                    if (chat.receiver == firebaseUser!!.uid && !chat.seen) {
+                        countUnread++;
+                    }
+                    val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
+                    if (countUnread == 0) {
+                        viewPagerAdapter.addFragment(ChatsFragment(), "Chats")
+                    } else {
+                        viewPagerAdapter.addFragment(ChatsFragment(), "Chats ($countUnread)")
+                    }
+                    viewPagerAdapter.addFragment(SearchFragment(), "Search")
+                    viewPagerAdapter.addFragment(SettingsFragment(), "Settings")
+                    viewPager.adapter = viewPagerAdapter
+                    tabLayout.setupWithViewPager(viewPager)
+                }
+            }
+
+        })
+
+
+        //display user information///
         refUser!!.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 if (p0.exists()) {
