@@ -14,7 +14,7 @@ import com.example.kdmessager.Ultilities.CHANNEL_NAME
 
 @RequiresApi(Build.VERSION_CODES.O)
 class OreoNotification(base: Context?) : ContextWrapper(base){
-    private lateinit var notificationManager: NotificationManager
+    private var notificationManager: NotificationManager? = null
 
     init {
         createChannel()

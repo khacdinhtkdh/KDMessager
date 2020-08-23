@@ -52,7 +52,7 @@ class MyFirebaseMessageService: FirebaseMessagingService() {
 
         firebaseUser = FirebaseAuth.getInstance().currentUser!!
         Log.d("SHIN", "receiver notification: ${firebaseUser.uid} $sented")
-        if (firebaseUser != null && sented == firebaseUser!!.uid) {
+        if (firebaseUser != null /*&& sented == firebaseUser!!.uid*/) {
             if (currentOnlineUser != user) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     sendOreoNotification(remoteMessage)
@@ -64,6 +64,7 @@ class MyFirebaseMessageService: FirebaseMessagingService() {
     }
 
     private fun sendNotification(remoteMessage: RemoteMessage) {
+        Log.d("SHIN", "use: sendNotification")
         val user = remoteMessage.data["user"]
         val icon = remoteMessage.data["icon"]
         val title = remoteMessage.data["title"]
@@ -97,6 +98,7 @@ class MyFirebaseMessageService: FirebaseMessagingService() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun sendOreoNotification(remoteMessage: RemoteMessage) {
+        Log.d("SHIN", "use: sendOreoNotification")
         val user = remoteMessage.data["user"]
         val icon = remoteMessage.data["icon"]
         val title = remoteMessage.data["title"]

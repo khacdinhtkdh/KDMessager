@@ -201,7 +201,7 @@ class MessageChatActivity : AppCompatActivity() {
                 for (snapshot in p0.children) {
                     val token = snapshot.getValue(Token::class.java)
                     val data = Data(firebaseUser!!.uid,
-                        R.mipmap.ic_launcher,
+                        R.drawable.yasuo,
                         "$username:  $message",
                         "New Message",
                         userIdVisit
@@ -209,7 +209,8 @@ class MessageChatActivity : AppCompatActivity() {
 
                     val notiContent = Content("$username:  $message", "abc")
 
-                    val sender = Sender(data,notiContent, token!!.token)
+                    //val sender = Sender(data,notiContent, token!!.token)
+                    val sender = Sender(data, token!!.token)
                     Log.d("SHIN", "${sender.to}, ${sender.data.user}")
                     apiService!!.sendNotification(sender)
                         .enqueue(object : Callback<MyResponse> {
