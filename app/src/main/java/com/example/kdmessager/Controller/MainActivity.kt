@@ -1,10 +1,16 @@
 package com.example.kdmessager.Controller
 
+import android.content.ClipData
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.ClipboardManager
+import android.util.Log
+import android.view.ContextMenu
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -47,37 +53,14 @@ class MainActivity : AppCompatActivity() {
 
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
+        val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
+        viewPagerAdapter.addFragment(ChatsFragment(), "Chats")
+        viewPagerAdapter.addFragment(SearchFragment(), "Search")
+        viewPagerAdapter.addFragment(SettingsFragment(), "Settings")
+        viewPager.adapter = viewPagerAdapter
+        tabLayout.setupWithViewPager(viewPager)
 
-        // display unread message //
-        val refUnread = FirebaseDatabase.getInstance().reference.child(CHATS)
-        refUnread.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                var countUnread = 0
-
-                for (snapshot in p0.children) {
-                    val chat = snapshot.getValue(Chat::class.java)!!
-                    if (chat.receiver == firebaseUser!!.uid && !chat.seen) {
-                        countUnread++;
-                    }
-                    val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
-                    if (countUnread == 0) {
-                        viewPagerAdapter.addFragment(ChatsFragment(), "Chats")
-                    } else {
-                        viewPagerAdapter.addFragment(ChatsFragment(), "Chats ($countUnread)")
-                    }
-                    viewPagerAdapter.addFragment(SearchFragment(), "Search")
-                    viewPagerAdapter.addFragment(SettingsFragment(), "Settings")
-                    viewPager.adapter = viewPagerAdapter
-                    tabLayout.setupWithViewPager(viewPager)
-                }
-            }
-
-        })
-
+        registerForContextMenu(user_name)
 
         //display user information///
         refUser!!.addValueEventListener(object : ValueEventListener {
@@ -95,11 +78,20 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+
+        menu!!.add(0, v!!.id, 0, "Copy")
+        menu!!.setHeaderTitle("Copy text")
+
+        super.onCreateContextMenu(menu, v, menuInfo)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
@@ -141,4 +133,23 @@ class MainActivity : AppCompatActivity() {
             return titles[position]
         }
     }
+
+    private fun updateStatus(status: String) {
+        val ref = FirebaseDatabase.getInstance().reference
+            .child(USERS).child(firebaseUser!!.uid)
+        val hashMap = HashMap<String, Any>()
+        hashMap["status"] = status
+        ref.updateChildren(hashMap)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus("online")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        updateStatus("offline")
+    }
+    
 }

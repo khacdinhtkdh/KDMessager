@@ -19,10 +19,7 @@ import com.example.kdmessager.Ultilities.USERS
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.InstanceIdResult
 
@@ -33,6 +30,8 @@ class ChatsFragment : Fragment() {
     private var mUser: ArrayList<Users> = ArrayList()
     private var userChatList: ArrayList<ChatList> = ArrayList()
     private lateinit var recyclerViewChatList: RecyclerView
+    private var refChatList : DatabaseReference? = null
+    lateinit var chatListListener: ValueEventListener
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,11 +44,32 @@ class ChatsFragment : Fragment() {
         recyclerViewChatList.layoutManager = LinearLayoutManager(context)
 
         firebaseUser = FirebaseAuth.getInstance().currentUser!!
-        val refChatList = FirebaseDatabase.getInstance().reference
+        refChatList = FirebaseDatabase.getInstance().reference
             .child(CHAT_LIST)
             .child(firebaseUser.uid)
 
-        refChatList.addValueEventListener(object : ValueEventListener {
+        displayChatList()
+
+        val refToken = FirebaseInstanceId.getInstance().instanceId
+        refToken.addOnSuccessListener { instanceIdResult ->
+            val mToken = instanceIdResult.token
+            updateToken(mToken)
+        }
+
+        return view
+    }
+
+
+    private fun updateToken(newToken: String?) {
+        firebaseUser = FirebaseAuth.getInstance().currentUser!!
+        val ref = FirebaseDatabase.getInstance().reference.child(TOKENS)
+        val token = Token(newToken!!)
+        ref.child(firebaseUser.uid).setValue(token)
+
+    }
+
+    private fun displayChatList() {
+        chatListListener = refChatList!!.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("Not yet implemented")
             }
@@ -64,22 +84,6 @@ class ChatsFragment : Fragment() {
             }
 
         })
-
-        val refToken = FirebaseInstanceId.getInstance().instanceId
-        refToken.addOnSuccessListener { instanceIdResult ->
-            val mToken = instanceIdResult.token
-            updateToken(mToken)
-        }
-        //updateToken(FirebaseInstanceId.getInstance().token)
-        return view
-    }
-
-    private fun updateToken(newToken: String?) {
-        firebaseUser = FirebaseAuth.getInstance().currentUser!!
-        val ref = FirebaseDatabase.getInstance().reference.child(TOKENS)
-        val token = Token(newToken!!)
-        ref.child(firebaseUser.uid).setValue(token)
-
     }
 
     private fun retrieveChatList() {
@@ -101,10 +105,11 @@ class ChatsFragment : Fragment() {
                     }
                 }
 
-                userAdapter = UserAdapter(context!!, mUser, true)
-                recyclerViewChatList.adapter = userAdapter
+                if (context != null) {
+                    userAdapter = UserAdapter(context!!, mUser, true)
+                    recyclerViewChatList.adapter = userAdapter
+                }
             }
-
         })
     }
 }

@@ -19,6 +19,7 @@ const val USER_IMAGES = "User images"
 const val ID = "id"
 
 const val EXTRA_VISIT_ID = "visit_id"
+const val EXTRA_URL = "extra_url"
 
 const val CHANNEL_ID = "com.example.kdmessager"
 const val CHANNEL_NAME = "Messenger App"

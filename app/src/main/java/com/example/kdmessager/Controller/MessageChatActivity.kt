@@ -45,8 +45,9 @@ class MessageChatActivity : AppCompatActivity() {
         supportActionBar!!.title = ""
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar_msgChat.setNavigationOnClickListener {
-            var intentHome = Intent(this, LoginActivity::class.java)
-            startActivity(intentHome)
+//            var intentHome = Intent(this, LoginActivity::class.java)
+//            startActivity(intentHome)
+            finish()
         }
 
         apiService = Client.Client.getClient(FCM_URL)!!.create(APIService::class.java)
@@ -207,11 +208,10 @@ class MessageChatActivity : AppCompatActivity() {
                         userIdVisit
                     )
 
-                    val notiContent = Content("$username:  $message", "abc")
+                    //val notiContent = Content("$username:  $message", "abc")
 
                     //val sender = Sender(data,notiContent, token!!.token)
                     val sender = Sender(data, token!!.token)
-                    Log.d("SHIN", "${sender.to}, ${sender.data.user}")
                     apiService!!.sendNotification(sender)
                         .enqueue(object : Callback<MyResponse> {
                             override fun onFailure(call: Call<MyResponse>, t: Throwable) {
@@ -219,7 +219,6 @@ class MessageChatActivity : AppCompatActivity() {
                             }
 
                             override fun onResponse(call: Call<MyResponse>, response: Response<MyResponse>) {
-                                Log.d("SHIN", response.code().toString())
                                 if (response.code() == 200) {
                                     if (response.body()!!.success !== 1) {
                                         Toast.makeText(this@MessageChatActivity, "Failed, Nothing happen", Toast.LENGTH_SHORT).show()
