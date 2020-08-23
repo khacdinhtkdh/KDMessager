@@ -34,7 +34,6 @@ class UserAdapter(private val context: Context, private val mUser: ArrayList<Use
     RecyclerView.Adapter<UserAdapter.ViewHolder?>() {
     var lastMsg: String = ""
     var isSeen = false
-    var lastMessageCheckSeen = false
 
     inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
         var userNameTxt = itemView?.findViewById<TextView>(R.id.search_username)
@@ -42,8 +41,8 @@ class UserAdapter(private val context: Context, private val mUser: ArrayList<Use
         private var onlineImageView = itemView?.findViewById<CircleImageView>(R.id.search_online_image)
         var offlineImageView = itemView?.findViewById<CircleImageView>(R.id.search_offline_image)
         var lastMessageTxt = itemView?.findViewById<TextView>(R.id.search_last_message)
-        var userLayout = itemView?.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.user_search_layout)
-        fun bindUser(user: Users, holder: ViewHolder, i: Int) {
+
+        fun bindUser(user: Users) {
             userNameTxt?.text = user.username
             Picasso.get().load(user.profile).placeholder(R.drawable.profile).into(profileImage)
 
@@ -75,7 +74,7 @@ class UserAdapter(private val context: Context, private val mUser: ArrayList<Use
     }
 
     override fun onBindViewHolder(holder: ViewHolder, i: Int) {
-        holder.bindUser(mUser[i], holder, i)
+        holder.bindUser(mUser[i])
         holder.itemView.setOnClickListener {
             val intent = Intent(context, MessageChatActivity::class.java)
             intent.putExtra(EXTRA_VISIT_ID, mUser[i].uid)

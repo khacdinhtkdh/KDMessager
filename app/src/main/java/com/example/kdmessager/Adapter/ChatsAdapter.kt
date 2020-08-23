@@ -1,9 +1,6 @@
 package com.example.kdmessager.Adapter
 
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.os.Environment
+import android.content.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +9,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kdmessager.Controller.ViewFullImageActivity
 import com.example.kdmessager.ModelClasses.Chat
@@ -19,22 +17,20 @@ import com.example.kdmessager.R
 import com.example.kdmessager.Ultilities.CHATS
 import com.example.kdmessager.Ultilities.EXTRA_URL
 import com.example.kdmessager.Ultilities.SEND_IMAGE
-import com.example.kdmessager.Ultilities.URL
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.message_item_chat_left.view.*
 import java.io.File
-import java.text.FieldPosition
 
 class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, val imageUrl: String) :
     RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
     var senderId: String = ""
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    var clip: ClipData? = null
 
     inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
         var profileImage = itemView?.findViewById<CircleImageView>(R.id.msg_item_profile)
@@ -117,27 +113,39 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
             } else { // show text //
                 showMessage!!.text = chat.message
 
-                //conregisterForContextMenu(showMessage!!)
-
-                if (chat.sender == senderId) {
-                    showMessage!!.setOnLongClickListener {
-                        // Toast.makeText(context, "Long click", Toast.LENGTH_SHORT).show()
-
-                        val option = arrayOf<CharSequence>(
+                showMessage!!.setOnLongClickListener {
+                    val option = if (chat.sender == senderId) {
+                        arrayOf<CharSequence>(
+                            "Copy",
                             "Delete",
                             "Cancel"
                         )
-                        var builder = AlertDialog.Builder(itemView.context)
-                        builder.setTitle("What do you want?")
-                        builder.setItems(option, DialogInterface.OnClickListener { dialogInterface, i ->
-                            if (i == 0) {
-                                deleteSentMessage(position, itemView.context, "")
-                            }
-                        })
-                        builder.show()
-                        true
+                    } else {
+                        arrayOf<CharSequence>(
+                            "Copy",
+                            "Cancel"
+                        )
                     }
+
+                    var builder = AlertDialog.Builder(itemView.context)
+                    builder.setTitle("What do you want?")
+                    builder.setItems(option, DialogInterface.OnClickListener { _, i ->
+                        when (i) {
+                            0 -> {
+                                clip = ClipData.newPlainText("text", showMessage!!.text)
+                                clipboard.setPrimaryClip(clip!!)
+                            }
+                            1 -> {
+                                if (chat.sender == senderId) {
+                                    deleteSentMessage(position, itemView.context, "")
+                                }
+                            }
+                        }
+                    })
+                    builder.show()
+                    true
                 }
+
             }
 
             // sent and seen //
@@ -207,7 +215,7 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
         val storageRef = storage.reference
         val pathReference = storageRef.child(url)
         val rootPath = File(context.externalCacheDir!!.absolutePath, "/KD Messenger")
-        val localFile = File(rootPath, System.currentTimeMillis().toString()+".png")
+        val localFile = File(rootPath, System.currentTimeMillis().toString() + ".png")
         //val gsReference = storage.getReferenceFromUrl("gs://")
         //val ONE_MEGABYTE: Long = 1024 * 1024
         pathReference.getFile(localFile).addOnSuccessListener {

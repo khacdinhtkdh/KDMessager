@@ -4,7 +4,7 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.ClipboardManager
+import android.content.ClipboardManager
 import android.util.Log
 import android.view.ContextMenu
 import androidx.appcompat.app.AppCompatActivity
@@ -60,8 +60,6 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = viewPagerAdapter
         tabLayout.setupWithViewPager(viewPager)
 
-        registerForContextMenu(user_name)
-
         //display user information///
         refUser!!.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
@@ -76,14 +74,6 @@ class MainActivity : AppCompatActivity() {
                 TODO("Not yet implemented")
             }
         })
-    }
-
-    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-
-        menu!!.add(0, v!!.id, 0, "Copy")
-        menu!!.setHeaderTitle("Copy text")
-
-        super.onCreateContextMenu(menu, v, menuInfo)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
