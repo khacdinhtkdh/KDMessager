@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.kdmessager.Controller.ViewFullImageActivity
 import com.example.kdmessager.ModelClasses.Chat
 import com.example.kdmessager.R
+import com.example.kdmessager.Service.DownloadImage
 import com.example.kdmessager.Ultilities.CHATS
 import com.example.kdmessager.Ultilities.EXTRA_URL
 import com.example.kdmessager.Ultilities.SEND_IMAGE
@@ -83,15 +84,12 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
                     Picasso.get().load(chat.url).into(leftImage)
 
                     leftImage!!.setOnClickListener {
-                        Toast.makeText(context, "On click", Toast.LENGTH_SHORT).show()
                         val intent = Intent(context, ViewFullImageActivity::class.java)
                         intent.putExtra(EXTRA_URL, chat.url)
                         context.startActivity(intent)
                     }
 
                     leftImage!!.setOnLongClickListener {
-                        // Toast.makeText(context, "Long click", Toast.LENGTH_SHORT).show()
-
                         val option = arrayOf<CharSequence>(
                             "Download image",
                             "Cancel"
@@ -100,9 +98,9 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
                         builder.setTitle("What do you want?")
                         builder.setItems(option, DialogInterface.OnClickListener { dialogInterface, i ->
                             if (i == 0) {
-                                //deleteSentMessage(position, itemView.context)
-                            } else if (i == 1) {
                                 downloadSentImage(chat.url)
+                            } else if (i == 1) {
+
                             }
                         })
                         builder.show()
@@ -211,17 +209,6 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
     }
 
     private fun downloadSentImage(url: String) {
-        val storage = Firebase.storage
-        val storageRef = storage.reference
-        val pathReference = storageRef.child(url)
-        val rootPath = File(context.externalCacheDir!!.absolutePath, "/KD Messenger")
-        val localFile = File(rootPath, System.currentTimeMillis().toString() + ".png")
-        //val gsReference = storage.getReferenceFromUrl("gs://")
-        //val ONE_MEGABYTE: Long = 1024 * 1024
-        pathReference.getFile(localFile).addOnSuccessListener {
-            Toast.makeText(context, "Download success", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener {
-
-        }
+        DownloadImage(context).downloadImage(url)
     }
 }

@@ -1,12 +1,14 @@
 package com.example.kdmessager.Controller
 
 import android.app.Activity
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kdmessager.Adapter.ChatsAdapter
@@ -24,8 +26,7 @@ import kotlinx.android.synthetic.main.activity_message_chat.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+
 
 class MessageChatActivity : AppCompatActivity() {
     var userIdVisit = ""
@@ -55,18 +56,25 @@ class MessageChatActivity : AppCompatActivity() {
         msg_progressBar.visibility = View.INVISIBLE
         intent = intent
         userIdVisit = intent.getStringExtra(EXTRA_VISIT_ID).toString()
+        CURRENT_CHATTING = userIdVisit
         firebaseUser = FirebaseAuth.getInstance().currentUser!!
         recyclerViewChats = findViewById(R.id.msg_list)
         var linearLayoutManager = LinearLayoutManager(applicationContext)
         linearLayoutManager.stackFromEnd = true
         recyclerViewChats.layoutManager = linearLayoutManager
 
+        if (SENDER_NOTIFICATION == userIdVisit) {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notifyID = userIdVisit!!.replace("[\\D]".toRegex(), "").toInt()
+            notificationManager.cancel(notifyID)
+        }
+
         val reference = FirebaseDatabase.getInstance().reference
             .child(USERS).child(userIdVisit)
 
-        reference.addValueEventListener(object : ValueEventListener{
+        reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -117,7 +125,8 @@ class MessageChatActivity : AppCompatActivity() {
                 for (snapshot in p0.children) {
                     val chat = snapshot.getValue(Chat::class.java)!!
                     if (chat.receiver == senderId && chat.sender == receiverId
-                        || chat.sender == senderId && chat.receiver == receiverId) {
+                        || chat.sender == senderId && chat.receiver == receiverId
+                    ) {
                         chatList.add(chat)
                     }
                 }
@@ -150,7 +159,7 @@ class MessageChatActivity : AppCompatActivity() {
                         .child(CHAT_LIST)
                         .child(firebaseUser!!.uid)
                         .child(userIdVisit)
-                    chatListRef.addListenerForSingleValueEvent(object : ValueEventListener{
+                    chatListRef.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onCancelled(p0: DatabaseError) {
                             TODO("Not yet implemented")
                         }
@@ -193,7 +202,7 @@ class MessageChatActivity : AppCompatActivity() {
         Log.d("SHIN", "sendNotification")
         val ref = FirebaseDatabase.getInstance().reference.child(TOKENS)
         val query = ref.orderByKey().equalTo(receiverId)
-        query.addValueEventListener(object  : ValueEventListener {
+        query.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("Not yet implemented")
             }
@@ -201,7 +210,8 @@ class MessageChatActivity : AppCompatActivity() {
             override fun onDataChange(p0: DataSnapshot) {
                 for (snapshot in p0.children) {
                     val token = snapshot.getValue(Token::class.java)
-                    val data = Data(firebaseUser!!.uid,
+                    val data = Data(
+                        firebaseUser!!.uid,
                         R.drawable.yasuo,
                         "$username:  $message",
                         "New Message",
@@ -215,14 +225,17 @@ class MessageChatActivity : AppCompatActivity() {
                     apiService!!.sendNotification(sender)
                         .enqueue(object : Callback<MyResponse> {
                             override fun onFailure(call: Call<MyResponse>, t: Throwable) {
-                                TODO("Not yet implemented")
+
                             }
 
                             override fun onResponse(call: Call<MyResponse>, response: Response<MyResponse>) {
                                 if (response.code() == 200) {
                                     if (response.body()!!.success !== 1) {
-                                        Toast.makeText(this@MessageChatActivity, "Failed, Nothing happen", Toast.LENGTH_SHORT).show()
-
+                                        Toast.makeText(
+                                            this@MessageChatActivity,
+                                            "Failed, Nothing happen",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
                             }
@@ -304,7 +317,6 @@ class MessageChatActivity : AppCompatActivity() {
     }
 
 
-
     private fun seenMessage(userId: String) {
         referenceChats = FirebaseDatabase.getInstance().reference.child(CHATS)
         seenListener = referenceChats.addValueEventListener(object : ValueEventListener {
@@ -334,7 +346,8 @@ class MessageChatActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        //Log.d("KD", "messageChatActivity: onPause")
+        Log.d("KDSHIN", "messageChatActivity: onPause")
+        CURRENT_CHATTING = ""
         referenceChats.removeEventListener(seenListener)
     }
 }

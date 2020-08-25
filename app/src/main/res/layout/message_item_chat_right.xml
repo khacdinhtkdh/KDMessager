@@ -27,6 +27,8 @@
                 android:layout_height="wrap_content"
                 android:text="show message"
                 android:textSize="18sp"
+                android:autoLink="web"
+                android:textColorLink="@android:color/white"
                 android:layout_alignParentRight="true"
                 android:padding="8dp"
                 android:textColor="@android:color/white"

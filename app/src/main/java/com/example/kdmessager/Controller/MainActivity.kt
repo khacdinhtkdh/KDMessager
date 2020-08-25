@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.content.ClipboardManager
+import android.media.MediaPlayer
 import android.util.Log
 import android.view.ContextMenu
 import androidx.appcompat.app.AppCompatActivity
@@ -45,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         firebaseUser = FirebaseAuth.getInstance().currentUser
         refUser = FirebaseDatabase.getInstance().reference
             .child(USERS).child(firebaseUser!!.uid)
-
 
         val toolbar: Toolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(toolbar)

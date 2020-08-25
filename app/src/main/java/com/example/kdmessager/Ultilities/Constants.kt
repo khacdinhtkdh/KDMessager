@@ -26,3 +26,6 @@ const val CHANNEL_NAME = "Messenger App"
 
 const val TOKEN_KEY = "AAAAPbTdCsY:APA91bE4QxMc8o4A3M5p-Y-W3jLjj-D5KtKXcRB8ZcxqpbldVjlw8gF16OpHtMG9PhsuHaBr_tcTPmM-v9LhDujuyoKTQDXhynEytc3PSNaX1zB1KG_gzfWSwdXmDBcgLaMQc4cgacEW"
 const val FCM_URL = "https://fcm.googleapis.com/"
+
+var CURRENT_CHATTING = ""
+var SENDER_NOTIFICATION = ""

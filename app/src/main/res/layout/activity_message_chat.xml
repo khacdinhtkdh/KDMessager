@@ -50,10 +50,11 @@
             android:layout_alignParentBottom="true">
         <ImageView
                 android:id="@+id/msg_attachFile"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
-                android:background="@drawable/ic_attach_file"/>
+                android:background="@drawable/ic_attach_file" android:layout_marginTop="6dp"
+                android:layout_alignParentTop="true"/>
         <EditText
                 android:id="@+id/msg_text"
                 android:layout_width="match_parent"
@@ -67,8 +68,9 @@
                 android:layout_centerVertical="true"/>
         <ImageView
                 android:id="@+id/msg_send"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/ic_action_name"/>
 

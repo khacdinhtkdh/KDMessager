@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:text="show message"
             android:textSize="18sp"
+            android:autoLink="web"
             android:layout_toRightOf="@+id/msg_item_profile"
             android:layout_marginLeft="6dp"
             android:padding="8dp"

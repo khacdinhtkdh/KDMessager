@@ -1,12 +1,12 @@
 package com.example.kdmessager.Service
 
-import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.Ringtone
+import android.media.MediaPlayer
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,20 +15,19 @@ import androidx.core.app.NotificationCompat
 import com.example.kdmessager.Controller.MessageChatActivity
 import com.example.kdmessager.ModelClasses.Token
 import com.example.kdmessager.Notifications.OreoNotification
-import com.example.kdmessager.Ultilities.CHANNEL_ID
-import com.example.kdmessager.Ultilities.EXTRA_VISIT_ID
-import com.example.kdmessager.Ultilities.TOKENS
+import com.example.kdmessager.R
+import com.example.kdmessager.Ultilities.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONException
 
-class MyFirebaseMessageService: FirebaseMessagingService() {
+
+class MyFirebaseMessageService : FirebaseMessagingService() {
     private lateinit var firebaseUser: FirebaseUser
     override fun onNewToken(token: String) {
-        Log.d("SHIN", "New TOKEN: $token")
-        //super.onNewToken(token)
         firebaseUser = FirebaseAuth.getInstance().currentUser!!
         if (firebaseUser != null) {
             updateToken(token)
@@ -44,33 +43,51 @@ class MyFirebaseMessageService: FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        val sented = remoteMessage.data["sented"]
-        val user = remoteMessage.data["user"]
+        var receiver: String? = ""
+        var sender: String? = ""
+        try {
+            receiver = remoteMessage.data["receiver"]
+            sender = remoteMessage.data["sender"]
+            if (sender != null) {
+                SENDER_NOTIFICATION = sender
+            }
+        } catch (e: JSONException) {
 
-        val sharedPref = getSharedPreferences("PREFS", Context.MODE_PRIVATE)
-        val currentOnlineUser = sharedPref.getString("currentUser", "none")
+        }
 
         firebaseUser = FirebaseAuth.getInstance().currentUser!!
-        Log.d("SHIN", "receiver notification: ${firebaseUser.uid} $sented")
-        if (firebaseUser != null /*&& sented == firebaseUser!!.uid*/) {
-            if (currentOnlineUser != user) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sendOreoNotification(remoteMessage)
-                } else {
-                    sendNotification(remoteMessage)
-                }
+
+        if (CURRENT_CHATTING != sender) {
+            var user: String? = ""
+            var icon: String? = ""
+            var title: String? = ""
+            var body: String? = ""
+            try {
+                user = remoteMessage.data["sender"]
+                icon = remoteMessage.data["icon"]
+                title = remoteMessage.data["title"]
+                body = remoteMessage.data["body"]
+            } catch (e: JSONException) {
+
             }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                sendOreoNotification(user, icon, title, body)
+            } else {
+                //sendNotification(user, icon, title, body)
+            }
+        } else {
+            ringStoneMessage()
         }
     }
 
-    private fun sendNotification(remoteMessage: RemoteMessage) {
-        Log.d("SHIN", "use: sendNotification")
-        val user = remoteMessage.data["user"]
-        val icon = remoteMessage.data["icon"]
-        val title = remoteMessage.data["title"]
-        val body = remoteMessage.data["body"]
+    private fun ringStoneMessage() {
+        val mediaPlayer = MediaPlayer.create(applicationContext, R.raw.text)
+        mediaPlayer.start()
 
-        val notification = remoteMessage.notification
+    }
+
+    private fun sendNotification(user: String?, icon: String?, title: String?, body: String?) {
         val j = user!!.replace("[\\D]".toRegex(), "").toInt()
         val intent = Intent(this, MessageChatActivity::class.java)
         val bundle = Bundle()
@@ -97,15 +114,9 @@ class MyFirebaseMessageService: FirebaseMessagingService() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun sendOreoNotification(remoteMessage: RemoteMessage) {
-        Log.d("SHIN", "use: sendOreoNotification")
-        val user = remoteMessage.data["user"]
-        val icon = remoteMessage.data["icon"]
-        val title = remoteMessage.data["title"]
-        val body = remoteMessage.data["body"]
-
-        val notification = remoteMessage.notification
+    private fun sendOreoNotification(user: String?, icon: String?, title: String?, body: String?) {
         val j = user!!.replace("[\\D]".toRegex(), "").toInt()
+
         val intent = Intent(this, MessageChatActivity::class.java)
         val bundle = Bundle()
         bundle.putString(EXTRA_VISIT_ID, user)
@@ -113,10 +124,10 @@ class MyFirebaseMessageService: FirebaseMessagingService() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT)
-        val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
         val oreoNotification = OreoNotification(this)
-        val builder: Notification.Builder = oreoNotification
-            .getOreoNotification(title!!, body, pendingIntent, defaultSound, icon)
+        val builder: NotificationCompat.Builder = oreoNotification
+            .getOreoNotification(title!!, body, pendingIntent, icon)
 
         var i = 0
         if (j > 0) {
