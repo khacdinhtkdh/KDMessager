@@ -1,6 +1,7 @@
 package com.example.kdmessager.Adapter
 
 import android.content.*
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,7 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
         var showMessage = itemView?.findViewById<TextView>(R.id.msg_item_show_message)
         var leftImage = itemView?.findViewById<ImageView>(R.id.msg_item_left_image)
         var rightImage = itemView?.findViewById<ImageView>(R.id.msg_item_right_image)
+        var likeImage = itemView?.findViewById<ImageView>(R.id.msg_emoji_heart)
         var seen = itemView?.findViewById<TextView>(R.id.msg_item_seen)
 
         fun onBindMessage(chat: Chat, position: Int) {
@@ -128,32 +130,42 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
                     val option = if (chat.sender == senderId) {
                         arrayOf<CharSequence>(
                             "Copy",
+                            "Like",
                             "Delete",
                             "Cancel"
                         )
                     } else {
                         arrayOf<CharSequence>(
                             "Copy",
+                            "Like",
                             "Cancel"
                         )
                     }
-
-                    var builder = AlertDialog.Builder(itemView.context)
-                    builder.setTitle("What do you want?")
-                    builder.setItems(option, DialogInterface.OnClickListener { _, i ->
-                        when (i) {
-                            0 -> {
-                                clip = ClipData.newPlainText("text", showMessage!!.text)
-                                clipboard.setPrimaryClip(clip!!)
-                            }
-                            1 -> {
-                                if (chat.sender == senderId) {
-                                    deleteSentMessage(position, itemView.context, "")
-                                }
-                            }
-                        }
-                    })
-                    builder.show()
+                    likeImage!!.visibility = View.VISIBLE
+                    showReactionMessage(likeImage!!)
+//                    var builder = AlertDialog.Builder(itemView.context)
+//                    builder.setTitle("What do you want?")
+//                    builder.setItems(option, DialogInterface.OnClickListener { _, i ->
+//                        when (i) {
+//                            0 -> {
+//                                clip = ClipData.newPlainText("text", showMessage!!.text)
+//                                clipboard.setPrimaryClip(clip!!)
+//                            }
+//                            2 -> {
+//                                if (chat.sender == senderId) {
+//                                    deleteSentMessage(position, itemView.context, "")
+//                                }
+//                            }
+//                            1 -> {
+//                                if (likeImage != null) {
+//                                    likeImage!!.visibility = View.VISIBLE
+//                                    Glide.with(itemView).asGif().load(R.drawable.animation_300_kebgkwu4)
+//                                        .into(likeImage!!)
+//                                }
+//                            }
+//                        }
+//                    })
+//                    builder.show()
                     true
                 }
 
@@ -175,6 +187,54 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
                 seen!!.visibility = View.GONE
             }
         }
+    }
+
+    private fun showReactionMessage(react: ImageView) {
+        val builder = AlertDialog.Builder(context)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.message_emoji, null)
+        builder.setView(dialogView)
+        builder.setCancelable(true)
+        val alertDialog  = builder.show()
+
+        val reactLove = dialogView.findViewById<ImageView>(R.id.react_love)
+        val reactCare = dialogView.findViewById<ImageView>(R.id.react_care)
+        val reactLike = dialogView.findViewById<ImageView>(R.id.react_like)
+        val reactHaha = dialogView.findViewById<ImageView>(R.id.react_haha)
+        val reactSad = dialogView.findViewById<ImageView>(R.id.react_sad)
+        val reactWow = dialogView.findViewById<ImageView>(R.id.react_wow)
+
+
+        reactLove.setOnClickListener {
+            Log.d("KDSHIN", "click on heart")
+            Glide.with(context).load(R.drawable.react_love).into(react)
+            alertDialog.dismiss()
+        }
+        reactCare.setOnClickListener {
+            Log.d("KDSHIN", "click on care")
+            Glide.with(context).load(R.drawable.react_care).into(react)
+            alertDialog.dismiss()
+        }
+        reactLike.setOnClickListener {
+            Log.d("KDSHIN", "click on like")
+            Glide.with(context).load(R.drawable.react_like).into(react)
+            alertDialog.dismiss()
+        }
+        reactHaha.setOnClickListener {
+            Log.d("KDSHIN", "click on haha")
+            Glide.with(context).load(R.drawable.react_haha).into(react)
+            alertDialog.dismiss()
+        }
+        reactSad.setOnClickListener {
+            Log.d("KDSHIN", "click on sad")
+            Glide.with(context).load(R.drawable.react_sad).into(react)
+            alertDialog.dismiss()
+        }
+        reactWow.setOnClickListener {
+            Log.d("KDSHIN", "click on wow")
+            Glide.with(context).load(R.drawable.react_wow).into(react)
+            alertDialog.dismiss()
+        }
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, i: Int) {

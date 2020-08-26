@@ -37,4 +37,11 @@
             android:text="sent"
             android:visibility="gone"
             android:layout_below="@+id/msg_item_show_message"/>
+    <ImageView
+            android:id="@+id/msg_emoji_heart"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:visibility="gone"
+            android:layout_toRightOf="@id/msg_item_show_message"
+            android:layout_below="@id/msg_item_show_message"/>
 </RelativeLayout>
