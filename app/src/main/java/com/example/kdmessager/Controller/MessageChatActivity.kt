@@ -342,16 +342,26 @@ class MessageChatActivity : AppCompatActivity() {
         })
     }
 
+    private fun updateStatus(status: String) {
+        val ref = FirebaseDatabase.getInstance().reference
+            .child(USERS).child(firebaseUser!!.uid)
+        val hashMap = HashMap<String, Any>()
+        hashMap["status"] = status
+        ref.updateChildren(hashMap)
+    }
+
     override fun onResume() {
         super.onResume()
         //Log.d("KD", "messageChatActivity: onResume")
+        updateStatus("online")
         seenMessage(userIdVisit)
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("KDSHIN", "messageChatActivity: onPause")
+        //Log.d("KDSHIN", "messageChatActivity: onPause")
         CURRENT_CHATTING = ""
+        updateStatus("offline")
         referenceChats.removeEventListener(seenListener)
     }
 }

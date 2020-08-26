@@ -35,7 +35,8 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="@+id/search_profile_image"
             app:layout_constraintBottom_toBottomOf="@+id/search_profile_image" android:layout_marginLeft="40dp"
-            android:layout_marginStart="40dp" app:layout_constraintVertical_bias="0.8"/>
+            android:layout_marginStart="40dp"
+            app:layout_constraintVertical_bias="0.85"/>
     <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="14dp"
             android:layout_height="14dp"
@@ -45,7 +46,8 @@
             app:civ_border_color="@android:color/darker_gray"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="@+id/search_profile_image"
             app:layout_constraintBottom_toBottomOf="@+id/search_profile_image" android:layout_marginLeft="40dp"
-            android:layout_marginStart="40dp" app:layout_constraintVertical_bias="0.8"/>
+            android:layout_marginStart="40dp"
+            app:layout_constraintVertical_bias="0.85"/>
     <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
