@@ -129,12 +129,12 @@ class MessageChatActivity : AppCompatActivity() {
                         || chat.sender == senderId && chat.receiver == receiverId
                     ) {
                         chatList.add(chat)
-                        chatsAdapter = ChatsAdapter(this@MessageChatActivity, chatList, imageUrl)
-                        recyclerViewChats.adapter = chatsAdapter
+//                        chatsAdapter = ChatsAdapter(this@MessageChatActivity, chatList, imageUrl)
+//                        recyclerViewChats.adapter = chatsAdapter
                     }
                 }
-//                chatsAdapter = ChatsAdapter(this@MessageChatActivity, chatList, imageUrl)
-//                recyclerViewChats.adapter = chatsAdapter
+                chatsAdapter = ChatsAdapter(this@MessageChatActivity, chatList, imageUrl)
+                recyclerViewChats.adapter = chatsAdapter
             }
 
         })
