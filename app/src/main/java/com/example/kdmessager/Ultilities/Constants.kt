@@ -29,3 +29,5 @@ const val FCM_URL = "https://fcm.googleapis.com/"
 
 var CURRENT_CHATTING = ""
 var SENDER_NOTIFICATION = ""
+var COVER_IMAGE_URL = ""
+var PROFILE_IMAGE_URL = ""

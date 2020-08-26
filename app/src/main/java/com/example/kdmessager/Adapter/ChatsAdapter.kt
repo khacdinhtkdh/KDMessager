@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.kdmessager.Controller.ViewFullImageActivity
 import com.example.kdmessager.ModelClasses.Chat
 import com.example.kdmessager.R
@@ -48,7 +49,7 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
                 // right //
                 if (chat.sender == senderId) {
                     rightImage!!.visibility = View.VISIBLE
-                    Picasso.get().load(chat.url).into(rightImage)
+                    Glide.with(itemView).load(chat.url).into(rightImage!!)
 
                     rightImage!!.setOnClickListener {
                         //Toast.makeText(context, "On click", Toast.LENGTH_SHORT).show()
@@ -81,7 +82,7 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
 
                 } else { // left //
                     leftImage!!.visibility = View.VISIBLE
-                    Picasso.get().load(chat.url).into(leftImage)
+                    Glide.with(itemView).load(chat.url).into(leftImage!!)
 
                     leftImage!!.setOnClickListener {
                         val intent = Intent(context, ViewFullImageActivity::class.java)
@@ -96,7 +97,7 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
                         )
                         var builder = AlertDialog.Builder(itemView.context)
                         builder.setTitle("What do you want?")
-                        builder.setItems(option, DialogInterface.OnClickListener { dialogInterface, i ->
+                        builder.setItems(option, DialogInterface.OnClickListener { _, i ->
                             if (i == 0) {
                                 downloadSentImage(chat.url)
                             } else if (i == 1) {
@@ -109,7 +110,19 @@ class ChatsAdapter(val context: Context, private val chatList: ArrayList<Chat>, 
                     }
                 }
             } else { // show text //
+                showMessage!!.visibility = View.VISIBLE
                 showMessage!!.text = chat.message
+                if (leftImage != null) {
+                    leftImage!!.visibility = View.GONE
+                }
+
+                if (rightImage != null) {
+                    rightImage!!.visibility = View.GONE
+                }
+
+                if (chat.sender == senderId && profileImage != null) {
+                    profileImage!!.visibility = View.GONE
+                }
 
                 showMessage!!.setOnLongClickListener {
                     val option = if (chat.sender == senderId) {

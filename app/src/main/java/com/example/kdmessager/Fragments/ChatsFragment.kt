@@ -30,7 +30,7 @@ class ChatsFragment : Fragment() {
     private var mUser: ArrayList<Users> = ArrayList()
     private var userChatList: ArrayList<ChatList> = ArrayList()
     private lateinit var recyclerViewChatList: RecyclerView
-    private var refChatList : DatabaseReference? = null
+    private lateinit var refChatList : DatabaseReference
     lateinit var chatListListener: ValueEventListener
 
     override fun onCreateView(
@@ -69,9 +69,9 @@ class ChatsFragment : Fragment() {
     }
 
     private fun displayChatList() {
-        chatListListener = refChatList!!.addValueEventListener(object : ValueEventListener {
+        chatListListener = refChatList.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -111,5 +111,10 @@ class ChatsFragment : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onPause() {
+        super.onPause()
+        refChatList.removeEventListener(chatListListener)
     }
 }

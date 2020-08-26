@@ -59,6 +59,7 @@ class MessageChatActivity : AppCompatActivity() {
         CURRENT_CHATTING = userIdVisit
         firebaseUser = FirebaseAuth.getInstance().currentUser!!
         recyclerViewChats = findViewById(R.id.msg_list)
+
         var linearLayoutManager = LinearLayoutManager(applicationContext)
         linearLayoutManager.stackFromEnd = true
         recyclerViewChats.layoutManager = linearLayoutManager
@@ -117,7 +118,7 @@ class MessageChatActivity : AppCompatActivity() {
 
         reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -128,10 +129,12 @@ class MessageChatActivity : AppCompatActivity() {
                         || chat.sender == senderId && chat.receiver == receiverId
                     ) {
                         chatList.add(chat)
+                        chatsAdapter = ChatsAdapter(this@MessageChatActivity, chatList, imageUrl)
+                        recyclerViewChats.adapter = chatsAdapter
                     }
                 }
-                chatsAdapter = ChatsAdapter(this@MessageChatActivity, chatList, imageUrl)
-                recyclerViewChats.adapter = chatsAdapter
+//                chatsAdapter = ChatsAdapter(this@MessageChatActivity, chatList, imageUrl)
+//                recyclerViewChats.adapter = chatsAdapter
             }
 
         })
@@ -179,6 +182,7 @@ class MessageChatActivity : AppCompatActivity() {
                     })
                 }
             }
+
         // implement the push notifications using fcm//
         val ref = FirebaseDatabase.getInstance().reference
             .child(USERS).child(firebaseUser.uid)
@@ -293,7 +297,7 @@ class MessageChatActivity : AppCompatActivity() {
                                     .child(USERS).child(firebaseUser.uid)
                                 ref.addValueEventListener(object : ValueEventListener {
                                     override fun onCancelled(p0: DatabaseError) {
-                                        TODO("Not yet implemented")
+
                                     }
 
                                     override fun onDataChange(p0: DataSnapshot) {

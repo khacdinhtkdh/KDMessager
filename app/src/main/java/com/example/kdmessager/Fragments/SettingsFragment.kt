@@ -12,9 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.kdmessager.ModelClasses.Users
 
 import com.example.kdmessager.R
+import com.example.kdmessager.Ultilities.COVER_IMAGE_URL
+import com.example.kdmessager.Ultilities.PROFILE_IMAGE_URL
 import com.example.kdmessager.Ultilities.USER_IMAGES
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -35,6 +38,7 @@ class SettingsFragment : Fragment() {
     private lateinit var storageRef: StorageReference
     private lateinit var coverCheck: String
     private lateinit var socialCheck: String
+    lateinit var settingListener: ValueEventListener
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +55,7 @@ class SettingsFragment : Fragment() {
         storageRef = FirebaseStorage.getInstance().reference
             .child(USER_IMAGES)
 
-        userReference.addValueEventListener(object : ValueEventListener {
+        settingListener = userReference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
 
             }
@@ -60,8 +64,10 @@ class SettingsFragment : Fragment() {
                 if (p0.exists()) {
                     val user = p0.getValue(Users::class.java)
                     view.setting_username.text = user!!.username
-                    Picasso.get().load(user.cover).into(view.setting_coverImg)
-                    Picasso.get().load(user.profile).into(view.setting_profileImg)
+//                    if (context != null) {
+                        Glide.with(view).load(user.cover).into(view.setting_coverImg)
+                        Glide.with(view).load(user.profile).into(view.setting_profileImg)
+//                    }
                 }
             }
 
@@ -199,5 +205,10 @@ class SettingsFragment : Fragment() {
             }
         }
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        userReference.removeEventListener(settingListener)
     }
 }
